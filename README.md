@@ -107,7 +107,7 @@ The `get_guardium_aliases.sh` script retrieves IP aliases from your Guardium Dat
 #### Example
 ```bash
 ./get_guardium_aliases.sh \
-  https://sith-gdp-20250915.dev.fyre.ibm.com:8443 \
+  https://example-collector.ibm.com:8443 \
   aliases \
   6c1b5f0c-1800-2145-86cb-6cf6cba9a1aa \
   admin \

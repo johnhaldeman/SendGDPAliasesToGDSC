@@ -177,38 +177,3 @@ Edit `get_guardium_aliases.sh` and modify the `OUTPUT_FILE` variable:
 ```bash
 OUTPUT_FILE="retrieved_aliases.json"  # Change this value as needed
 ```
-
-## Examples
-
-### Complete Workflow
-
-```bash
-# Step 1: Retrieve aliases from GDP
-./get_guardium_aliases.sh \
-  https://my-gdp-server.company.com:8443 \
-  my_client_id \
-  a1b2c3d4-e5f6-7890-abcd-ef1234567890 \
-  admin_user \
-  'MyP@ssw0rd!'
-
-# Step 2: Upload to GDSC
-./upload_aliases_to_gdsc.sh \
-  https://my-gdsc-server.company.com \
-  'Basic YWRtaW46cGFzc3dvcmQ=' \
-  PRODUCTION_IP_ALIASES
-
-```
-
-
-### Automation with Cron
-
-To automate the sync process, add to crontab:
-
-```bash
-# Edit crontab
-crontab -e
-
-# Add entry to run daily at 2 AM
-0 2 * * * cd /path/to/SendGDPAliasesToGDSC && ./get_guardium_aliases.sh <args> && ./upload_aliases_to_gdsc.sh <args> >> /var/log/gdp-sync.log 2>&1
-```
-

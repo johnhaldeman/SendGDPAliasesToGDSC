@@ -1,0 +1,12 @@
+[
+    {
+        "groupType": "Client IP",
+        "DbValue": "10.10.9.10",
+        "AliasValue": "hello_world.ibm.com"
+    },
+    {
+        "groupType": "Server IP",
+        "DbValue": "10.10.9.11",
+        "AliasValue": "goodbye_world"
+    }
+]

@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Script to retrieve IP aliases from Guardium and save to JSON file
-# Usage: ./get_guardium_aliases.sh <guardium_url> <client_id> <client_secret> <username> <password>
+# Usage: ./get_guardium_aliases.sh <guardium_url> <client_id> <client_secret> <username> <password> [group_type]
+#   group_type: Optional. Either "Client+IP" (default) or "Server+IP"
 
 set -e  # Exit on error
 
@@ -25,12 +26,21 @@ print_info() {
 }
 
 # Check if required arguments are provided
-if [ "$#" -ne 5 ]; then
+if [ "$#" -lt 5 ] || [ "$#" -gt 6 ]; then
     print_error "Invalid number of arguments"
-    echo "Usage: $0 <guardium_url> <client_id> <client_secret> <username> <password>"
+    echo "Usage: $0 <guardium_url> <client_id> <client_secret> <username> <password> [group_type]"
     echo ""
-    echo "Example:"
+    echo "Arguments:"
+    echo "  guardium_url    : Guardium server URL"
+    echo "  client_id       : OAuth client ID"
+    echo "  client_secret   : OAuth client secret"
+    echo "  username        : Guardium username"
+    echo "  password        : Guardium password"
+    echo "  group_type      : Optional. Either 'Client+IP' (default) or 'Server+IP'"
+    echo ""
+    echo "Examples:"
     echo "  $0 https://sith-gdp-20250915.dev.fyre.ibm.com:8443 aliases 6c1b5f0c-1800-2145-86cb-6cf6cba9a1aa admin 'GuardiumRocks!1'"
+    echo "  $0 https://sith-gdp-20250915.dev.fyre.ibm.com:8443 aliases 6c1b5f0c-1800-2145-86cb-6cf6cba9a1aa admin 'GuardiumRocks!1' 'Server+IP'"
     exit 1
 fi
 
@@ -40,7 +50,14 @@ CLIENT_ID="$2"
 CLIENT_SECRET="$3"
 USERNAME="$4"
 PASSWORD="$5"
+GROUP_TYPE="${6:-Client+IP}"  # Default to "Client+IP" if not provided
 OUTPUT_FILE="retrieved_aliases.json"
+
+# Validate group_type parameter
+if [ "$GROUP_TYPE" != "Client+IP" ] && [ "$GROUP_TYPE" != "Server+IP" ]; then
+    print_error "Invalid group_type: '$GROUP_TYPE'. Must be either 'Client+IP' or 'Server+IP'"
+    exit 1
+fi
 
 # Remove trailing slash from URL if present
 GUARDIUM_URL="${GUARDIUM_URL%/}"
@@ -49,6 +66,7 @@ print_info "Starting Guardium IP aliases retrieval..."
 print_info "Guardium URL: $GUARDIUM_URL"
 print_info "Client ID: $CLIENT_ID"
 print_info "Username: $USERNAME"
+print_info "Group Type: $GROUP_TYPE"
 
 # Step 1: Get OAuth token
 print_info "Step 1: Requesting OAuth token..."
@@ -76,13 +94,13 @@ print_success "OAuth token obtained successfully"
 print_info "Token: ${ACCESS_TOKEN:0:10}..." # Show only first 10 chars for security
 
 # Step 2: Get IP aliases
-print_info "Step 2: Retrieving IP aliases..."
+print_info "Step 2: Retrieving IP aliases (groupTypeDescLike=${GROUP_TYPE})..."
 
 ALIASES_RESPONSE=$(curl -k -s \
     --header "Authorization:Bearer ${ACCESS_TOKEN}" \
     -H "Content-Type:application/json" \
     -X GET \
-    "${GUARDIUM_URL}/restAPI/alias?groupTypeDescLike=Client+IP")
+    "${GUARDIUM_URL}/restAPI/alias?groupTypeDescLike=${GROUP_TYPE}")
 
 # Check if aliases request was successful
 if [ -z "$ALIASES_RESPONSE" ]; then

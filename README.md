@@ -91,7 +91,7 @@ The `get_guardium_aliases.sh` script retrieves IP aliases from your Guardium Dat
 
 #### Syntax
 ```bash
-./get_guardium_aliases.sh <guardium_url> <client_id> <client_secret> <username> <password>
+./get_guardium_aliases.sh <guardium_url> <client_id> <client_secret> <username> <password> [group_type]
 ```
 
 #### Parameters
@@ -100,26 +100,42 @@ The `get_guardium_aliases.sh` script retrieves IP aliases from your Guardium Dat
 - `client_secret`: OAuth client secret (UUID format)
 - `username`: GDP username with API access
 - `password`: User password (use quotes if it contains special characters)
+- `group_type`: Optional. Either `Client+IP` (default) or `Server+IP` to specify which type of IP aliases to retrieve
 
 #### Output
 - Creates a file named `retrieved_aliases.json` containing all IP aliases
 
-#### Example
+#### Examples
 ```bash
+# Retrieve Client IP aliases (default behavior)
 ./get_guardium_aliases.sh \
   https://example-collector.ibm.com:8443 \
   aliases \
   6c1b5f0c-1800-2145-86cb-6cf6cba9a1aa \
   admin \
   'GuardiumRocks!1'
+
+# Retrieve Server IP aliases
+./get_guardium_aliases.sh \
+  https://example-collector.ibm.com:8443 \
+  aliases \
+  6c1b5f0c-1800-2145-86cb-6cf6cba9a1aa \
+  admin \
+  'GuardiumRocks!1' \
+  'Server+IP'
 ```
 
 #### What It Does
 1. Authenticates with GDP using OAuth 2.0 password grant flow
-2. Retrieves all IP aliases using the `/restAPI/alias` endpoint
-3. Filters for IP group types
+2. Retrieves IP aliases using the `/restAPI/alias` endpoint with the specified group type filter
+3. Filters for either Client IP or Server IP group types (based on the `group_type` parameter)
 4. Saves the response to `retrieved_aliases.json`
 5. Validates the output file
+
+#### Group Type Details
+- **Client+IP** (default): Retrieves aliases for client IP addresses that connect to databases
+- **Server+IP**: Retrieves aliases for server/database IP addresses
+- If no group type is specified, the script defaults to `Client+IP` for backward compatibility
 
 ### Step 2: Upload Aliases to GDSC
 

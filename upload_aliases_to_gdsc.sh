@@ -136,17 +136,19 @@ if [ "$DATASET_EXISTS" = false ]; then
   "detail": {
     "columns": [
       {
-        "allow_null": true,
-        "column_id": 0,
-        "column_name": "IP_ADDRESS",
+        "allow_null": false,
+        "column_id": 1,
+        "id": 1,
+        "column_name": "ip_address",
         "column_size": "15",
         "column_type": "TEXT",
-        "unique": true
+        "unique": false
       },
       {
-        "allow_null": true,
-        "column_id": 0,
-        "column_name": "ALIAS_HOSTNAME",
+        "allow_null": false,
+        "column_id": 2,
+        "id": 2,
+        "column_name": "alias_hostname",
         "column_size": "256",
         "column_type": "TEXT",
         "unique": false
@@ -254,7 +256,7 @@ for ((batch=0; batch<TOTAL_BATCHES; batch++)); do
     # Build batch payload
     BATCH_PAYLOAD=$(jq -n \
         --arg dataset_name "$DATASET_NAME" \
-        --argjson aliases "$(jq "[.[$START_INDEX:$END_INDEX] | .[] | {entry: {IP_ADDRESS: .DbValue, ALIAS_HOSTNAME: .AliasValue}}]" "$INPUT_FILE")" \
+        --argjson aliases "$(jq "[.[$START_INDEX:$END_INDEX] | .[] | {entry: {ip_address: .DbValue, alias_hostname: .AliasValue}}]" "$INPUT_FILE")" \
         '{dataset_name: $dataset_name, entries: $aliases}')
     
     # Upload batch

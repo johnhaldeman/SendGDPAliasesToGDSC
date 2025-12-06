@@ -82,7 +82,7 @@ ALIASES_RESPONSE=$(curl -k -s \
     --header "Authorization:Bearer ${ACCESS_TOKEN}" \
     -H "Content-Type:application/json" \
     -X GET \
-    "${GUARDIUM_URL}/restAPI/alias?groupTypeDescLike=IP")
+    "${GUARDIUM_URL}/restAPI/alias?groupTypeDescLike=Client+IP")
 
 # Check if aliases request was successful
 if [ -z "$ALIASES_RESPONSE" ]; then
